@@ -1,60 +1,62 @@
 import pytest
 import os
 import sys
-import json
-
 from project import validate_pwd
 from project import read_file
 from project import write_file
 from project import validate_json
-from unittest.mock import Mock, patch, mock_open
+from project import update_password
+import json
 
-#@pytest.fixture(scope='function', autouse=True) 
-#def json_error():
-#    passwords = {
-#  'site 1': {
-#      "username": "al", "city": "island",
-#    "password": "gAAAAABogboAnBG_2V_3TmHR4wXhtPH_ccwQxS8c3751-9uyF_pRLDQlWBMrrKBny-aLAd8YXxuGmPcMgfPEmWoY85Ucph-iig=="
-#    },
-#}
-    
-#    with open("jsonerror.json", "w") as f:
-#        json.dump(passwords, f)
-#    open(jser, "w")
-#    f.write(jser)
-#    f.write(jser)
-
-def test_validate_pwd_9char():
-    assert validate_pwd("OneFine$1") == True
-
-def test_validate_pwd_embedded_space():
-    assert validate_pwd("Not SoFast2!") == False
-
-def test_validate_pwd_illegal_char():
-    assert validate_pwd("Not|SoFast2!") == False
-
-def test_validate_pwd_19char():
-    assert validate_pwd("1VeryLong#Andpotent") == True
-
-def test_validate_pwd_21char():
-    assert validate_pwd("1VeryLong#Andpotent0%") == False
+@pytest.mark.parametrize(("password, expected"),
+        [
+            pytest.param("OneFine$1", True, id="9 Char Valid Passowrd"),
+            pytest.param("2Short!", False, id="7 Char Invalid Passowrd"),
+            pytest.param("1VeryLong#Andpotent", True, id="19 Characters"),
+            pytest.param("1PwdJustLongenough&!", True, id="20 Characters"),
+            pytest.param("1TooLong@#Andpotent0%", False, id="21 Characters"),
+            pytest.param("Not SoFast2!", False, id="Embedded space"),
+            pytest.param("Not|SoFast2!", False, id="Illegal character"),
+            ],
+        )
+def test_validate_pwd(password, expected):
+    assert validate_pwd(password) == expected
 
 def test_read_file_fnf():
     with pytest.raises(FileNotFoundError) as e_info:
         read_file(json_file="none.json")
     assert str(e_info.value) == "File password.json not found"
-    
-#def test_read_file_JSONERROR():
-#    with pytest.raises(json.JSONDecodeError) as e:
-#        my_data = {}
-#        my_data ={ '5550 laptop': { 'username': 'Alton Goodman', 'password': 'BigSecret' } }
-#        print(f"{my_data}")
-#        read_file(json_file=my_data) 
-#    assert "JSON Decode error" in str(e)
 
+@pytest.fixture
+def bad_json(tmp_path):
+    my_data ={ '5550 laptop': { 1: 'Alton Goodman', 'password': 'BigSecret' } }
+    target = os.path.join(tmp_path, "password.json")
+    with open(target, "w", encoding="utf-8") as f:
+        f.write(str(my_data))
+    return target
+
+def test_read_file_JSONDECODE_ERROR(bad_json):
+    with pytest.raises(json.JSONDecodeError) as e_info:
+        read_file(bad_json)
+    assert str(e_info.value) == "Invalid JSON syntax: line 1 column 1 (char 0)"
+
+
+@pytest.mark.parametrize(
+        ("site, password, password_dict, expected_exception"),
+        [
+            ('site 1', 'TooEasy#2', \
+                    '{ "site 1": \
+                    { "username": "al", "password": 1 }}', TypeError,
+                    ),
+            ],
+        )
+def test_update_password(site, password, password_dict, expected_exception):
+    with pytest.raises(TypeError):
+        update_password(site, password, password_dict)
+    
 def test_validate_json_extra_comma():
     def validate_json(json_data =  '''{ "site 1": \
-             { "username": "al",, "password": "secret" }}'''):
+            { "username": "al",, "password": "secret" }}'''):
         try:
             json.loads(json_data)
             return True

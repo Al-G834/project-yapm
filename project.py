@@ -7,11 +7,10 @@
         - list
         - get
         passwords
-    The passwords are stored as a dictionary.
+    The passwords are stored as a nested dictionary.
 """
 import os
 import sys
-import logging
 import hashlib
 import json
 import re
@@ -21,7 +20,6 @@ from tkinter.font import Font
 from tkinter import Menu
 
 from cryptography.fernet import Fernet
-
 
 
 def create_rc_dir():
@@ -87,10 +85,15 @@ def read_file(json_file="password.json"):
     try:
         with open(password_file, "r", encoding="utf-8") as password_dict_fh:
             password_dict = json.load(password_dict_fh)
-    except FileNotFoundError:
-        raise FileNotFoundError("File password.json not found")
-    except json.decoder.JSONDecodeError:
-        raise json.decoder.JSONDecodeError("JSON Decode error", "password file", 0)
+    except FileNotFoundError as e_fnf:
+        raise FileNotFoundError("File password.json not found") from e_fnf
+    except json.JSONDecodeError as decode_err:
+        # print(f"Invalid JSON syntax")
+        raise json.decoder.JSONDecodeError(
+            "Invalid JSON syntax", "password file", 0
+        ) from decode_err
+    except AttributeError as attr_err:
+        sys.exit(f"{attr_err}")
     return password_dict
 
 
@@ -98,16 +101,12 @@ def write_file(password_dict, json_file="password.json"):
     """close the password file"""
     password_file = json_file
     if validate_json(f'"{password_dict}"') is True:
-        try:
-            with open(password_file, "w", encoding="utf-8") as password_fh:
-                json.dump(password_dict, password_fh)
-
-        except ValueError as err_id:
-            print(f"Failed to decode JSON: {err_id}")
+        with open(password_file, "w", encoding="utf-8") as password_fh:
+            json.dump(password_dict, password_fh)
 
 
 def write_file_exit():
-    """close the password file and exit"""
+    """Exit"""
     sys.exit(0)
 
 
@@ -142,7 +141,8 @@ def add(event):
             msg = "Error: The site_id already exists in passwords"
             msg_type = "warning"
         elif site_id and username and password:
-            password_dict = add_password(password_dict, site_id, username, password)
+            password_dict = add_password(password_dict, site_id, 
+                    username, password)
             write_file(password_dict)
             msg = "Success, Password added!!"
             msg_type = "normal"
@@ -198,8 +198,8 @@ def update_password(site, password, password_dict):
         password_dict[f"{site}"].update(
             {"password": f"{encrypt_pwd(cipher, password)}"}
         )
-    except json.JSONDecodeError as decode_err:
-        sys.exit(f"{decode_err}")
+    except KeyError as key_err:
+        sys.exit(f"{key_err}")
     except ValueError as json_error:
         sys.exit(f"Error decoding JSON: {json_error}")
 
@@ -220,8 +220,7 @@ def get(event):
             msg = f"Site ID: {site_id}"
             for key, value in info.items():
                 if key == "password":
-                    decrypted_pwd = decrypt_pwd(cipher, value)
-                    msg += f"\n{key}: {decrypted_pwd}"
+                    msg += f"\n{key}: {decrypt_pwd(cipher, value)}"
                 else:
                     msg += f"\n{key}: {info[key]}"
 
@@ -240,7 +239,7 @@ def getlist(event):
     clear_entry_widgets()
     if password_dict is not None:
         msg = "List of saved sites:\n"
-        for site_id, info in password_dict.items():
+        for site_id in password_dict.keys():
             msg += f"Site ID: {site_id}\n"
         msg_type = "normal"
     else:
@@ -474,6 +473,5 @@ if __name__ == "__main__":
     #
     create_rc_dir()
     cipher = load_encryption_key()
-    #    load_initial_json_file(cipher)
-    #    read_file()
+    load_initial_json_file(cipher)
     app.mainloop()
