@@ -14,7 +14,7 @@ My project is a password manager that stores the username and password in a nest
   },
 '''
   
-This project could have been written as a CLI application, however, I wanted to use Tkinter.  I had used TCL/Tk in the past and wanted to use it.  I also chose to use the cryptography module.
+This project could have been written as a CLI application.  I also chose to use the cryptography module.
 
 Each function: Add, Get, List, Update, and Delete begins by reading the password.json file into memory.  At the end of each function, the nested dictionary is serialized into a json formatted file and written to disk.
 The dictionary allows only one username-password tuple per Identifier/Site ID.
