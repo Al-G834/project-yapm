@@ -4,8 +4,7 @@
 
 ### Description:
 
-[yapm screenshot](https://github.com/Al-G834/project-yapm/yapm.png)
-
+<img width="720" height="657" alt="yapm" src="https://github.com/user-attachments/assets/22f579f9-94ab-4033-a500-e2cd96f26bf8" />
 
 
 My project is a password manager that stores the username and password in a nested dictionary. This would be an example:
