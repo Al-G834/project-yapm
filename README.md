@@ -29,7 +29,7 @@ The directory structure is described by this figure:
 ```
 
 **Initial Startup**  
-When the project.py is started, it check to see if the hidden directory, .projectrc, exists.  If this is the first time, the hidden directory is created and the encryption key is written in that .projectrc directory.  A sample Site ID, userid, and password are written to the password file.  
+When the ```project.py``` is started, it check to see if the hidden directory, .projectrc, exists.  If this is the first time, the hidden directory is created and the encryption key is written in that .projectrc directory.  A sample Site ID, userid, and password are written to the password file.  
 The encryption key is used to encrypt/decrypt the stored password.  If the key is erased, a new one will be generated.  But all of the stored passwords will be useless.  
 Messages will be displayed in the text widget, error messages are displayed in red.
 
