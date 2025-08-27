@@ -61,11 +61,11 @@ Populate the SITE ID widget.
 Press the Get button, the application will locate and display the SITE ID, USERNAME, and PASSWORD in the Text frame. The password will be displayed in plain-text.
 
 **3. List processing**  
-The widgets may be left blank.
+The widgets may be left blank.  
 Press the List button and all SITE ID's will be displayed in the Text widget.
 
 **4. Update processing**  
-Populate the SITE ID and PASSWORD widgets.
+Populate the SITE ID and PASSWORD widgets.  
 Only the SITE ID and PASSWORD are required to update the password. The value of the password is replaced with the encrypted password.
 
 **5. Delete processing**  
