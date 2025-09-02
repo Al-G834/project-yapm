@@ -23,19 +23,14 @@ from cryptography.fernet import Fernet
 
 
 def create_rc_dir():
-    """Create a ~/.project directory in the directory that the script
+    """
+    Create a ~/.projectrc directory in the directory that the script
     was invoked in.  This hidden directory is used to store the
     encryption key used to encrypt/decrypt the password.
     """
-    if not os.path.isdir(".project"):
-        os.mkdir("./.project", mode=0o740)
+    if not os.path.isdir(".projectrc"):
+        os.mkdir("./.projectrc", mode=0o740)
 
-
-def hash_pwd(password):
-    """hash the password using sha256, returns hashed passwork"""
-    sha256 = hashlib.sha256()
-    sha256.update(password.encode())
-    return sha256.hexdigest()
 
 
 def generate_key():
@@ -59,12 +54,13 @@ def decrypt_pwd(cipher, encrypted_pwd):
 
 
 def load_encryption_key():
-    """The encryption_key is generated and stored
-    in a hidden directory, ./project.
-    The encryption_key will be used repeatedly to
-    hash passwords stored in the file.
     """
-    key_flnm = ".project/encryption_key.key"
+    The encryption_key is generated and stored
+    in a hidden directory, ./projectrc.
+    The encryption_key will be used repeatedly to
+    hash passwords stored in the dictionary.
+    """
+    key_flnm = ".projectrc/encryption_key.key"
     if os.path.exists(key_flnm):
         with open(key_flnm, "rb") as key_file:
             key = key_file.read()
@@ -79,7 +75,15 @@ def load_encryption_key():
 
 
 def read_file(json_file="password.json"):
-    """open the password file"""
+    """
+    open the password file
+
+    The file to be opened may be overridden but is other-wise assumed
+    to be password.json.
+
+    Output:
+    A dictionary representation of the json file.
+    """
     password_file = json_file
     password_dict = {}
     try:
@@ -98,7 +102,13 @@ def read_file(json_file="password.json"):
 
 
 def write_file(password_dict, json_file="password.json"):
-    """close the password file"""
+    """
+    Input:
+    password didtionary
+
+    Returns:
+    serialized json string written to file.
+    """
     password_file = json_file
     if validate_json(f'"{password_dict}"') is True:
         with open(password_file, "w", encoding="utf-8") as password_fh:
@@ -120,7 +130,19 @@ def validate_json(json_data):
 
 
 def add(event):
-    """Add the nested dictionary to the SiteID dictionary"""
+    """
+    Add the nested dictionary to the SiteID dictionary
+    Input:
+        site id from GUI
+        username from GUI
+        password from GUI
+
+    Read the dictionary from file.
+
+    Output:
+        The site id and tuple, username and password are added to the dictionary.
+        The updated dictionary is serialized and written to file.
+    """
     password_dict = read_file()
 
     site_id = entry_site.get().strip()
@@ -155,7 +177,18 @@ def add(event):
 
 
 def add_password(password_dict, site_id, username, password):
-    """The password for the Site ID is updated."""
+    """
+    The password for the Site ID is updated.
+
+    Input:
+        Password dictionary.
+        site_id
+        username
+        password
+
+    Output:
+        Passord dictionary.
+    """
 
     password_dict = {
         **password_dict,
@@ -168,7 +201,15 @@ def add_password(password_dict, site_id, username, password):
 
 
 def update(event):
-    """update the password for the Site ID and username"""
+    """
+    update the password for the Site ID and username
+    Input:
+        site from GUI
+        password from GUI
+
+    Output:
+        Password dictionary
+    """
     password_dict = read_file()
 
     site = entry_site.get().strip()
@@ -193,7 +234,20 @@ def update(event):
 
 
 def update_password(site, password, password_dict):
-    """The password for the given site is updated."""
+    """
+    The password for the given site is updated.
+    Input:
+        site
+        password
+        password dictionary
+
+    Output:
+        password dictionary
+
+    Raises:
+        KeyError
+        ValueError
+    """
     try:
         password_dict[f"{site}"].update(
             {"password": f"{encrypt_pwd(cipher, password)}"}
@@ -207,7 +261,19 @@ def update_password(site, password, password_dict):
 
 
 def get(event):
-    """get the username and password for the Site ID"""
+    """
+    get the username and password for the Site ID
+    Input:
+        Password dictionary
+        site_id
+
+    The username and password is listed for the given site_id.
+
+    Output:
+        site_id
+        username
+        password
+    """
     password_dict = read_file()
 
     site = entry_site.get().strip()
@@ -233,7 +299,12 @@ def get(event):
 
 
 def getlist(event):
-    """list all Site ID's in the dictionary"""
+    """
+    list all Site ID's in the dictionary
+
+    Output:
+        All site_id's and username/passwords are listed in the text widget.
+    """
     password_dict = read_file()
 
     clear_entry_widgets()
@@ -250,7 +321,14 @@ def getlist(event):
 
 
 def delete(event):
-    """delete the Site ID"""
+    """
+    delete the Site ID
+    Input:
+        site_id
+
+    Output:
+        Updated password dictionary.
+    """
     password_dict = read_file()
 
     site_id = entry_site.get().strip()
@@ -277,7 +355,7 @@ def load_initial_json_file(cipher):
     and create the password.json file.
     """
     if not os.path.isfile("./password.json"):
-        sample_password = "UseAMixedCasePwd@1"
+        sample_password = "Use a good password"
         encrypted_sample = encrypt_pwd(cipher, sample_password)
         sample_dictionary = {
             "Sample Site ID": {"username": "Ur Name", "password": f"{encrypted_sample}"}
@@ -287,7 +365,7 @@ def load_initial_json_file(cipher):
 
 
 def validate_pwd(password):
-    """Validates the enterred password, must have:
+    """Validates the entered password, must have:
     - at least one lower-case letter
     - at least one upper-case letter
     - at least one digit, 0-9
