@@ -14,13 +14,13 @@ import sys
 import hashlib
 import json
 import re
+from pathlib import Path
 
 import tkinter as tk
 from tkinter.font import Font
 from tkinter import Menu
 
-from cryptography.fernet import Fernet
-
+from cryptography.fernet import Fernet, InvalidToken
 
 def create_rc_dir():
     """
@@ -31,7 +31,8 @@ def create_rc_dir():
     if not os.path.isdir(".projectrc"):
         os.mkdir("./.projectrc", mode=0o740)
 
-
+    Path("./.projectrc/DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY").touch()
+    os.chmod("./.projectrc/DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY", mode=0o444)
 
 def generate_key():
     """generate a secret key.  only done once."""
@@ -247,6 +248,7 @@ def update_password(site, password, password_dict):
     Raises:
         KeyError
         ValueError
+        InvalidToken
     """
     try:
         password_dict[f"{site}"].update(
@@ -256,6 +258,8 @@ def update_password(site, password, password_dict):
         sys.exit(f"{key_err}")
     except ValueError as json_error:
         sys.exit(f"Error decoding JSON: {json_error}")
+    except InvalidToken:
+        sys.exit("Missing encryption token in .projectec\n password cannot be decrypted")
 
     return password_dict
 
@@ -286,7 +290,13 @@ def get(event):
             msg = f"Site ID: {site_id}"
             for key, value in info.items():
                 if key == "password":
-                    msg += f"\n{key}: {decrypt_pwd(cipher, value)}"
+                    try:
+                        msg += f"\n{key}: {decrypt_pwd(cipher, value)}"
+                    except InvalidToken:
+                        sys.exit(f"Invalid token: Decryption failed\n \
+                   for Site ID: {site}")
+
+
                 else:
                     msg += f"\n{key}: {info[key]}"
 
