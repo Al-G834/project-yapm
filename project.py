@@ -22,6 +22,7 @@ from tkinter import Menu
 
 from cryptography.fernet import Fernet, InvalidToken
 
+
 def create_rc_dir():
     """
     Create a ~/.projectrc directory in the directory that the script
@@ -33,6 +34,7 @@ def create_rc_dir():
 
     Path("./.projectrc/DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY").touch()
     os.chmod("./.projectrc/DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY", mode=0o444)
+
 
 def generate_key():
     """generate a secret key.  only done once."""
@@ -152,10 +154,10 @@ def add(event):
     if not validate_pwd(password):
         msg = "Password must have at least:\none upper-case letter,\n"
         msg += "one lower-case letter,\n"
-        msg += "1 digit,\n"
-        msg += "a special character '@$!%*?&',\n"
-        msg += "no embeded spaces,\n"
-        msg += "and the length must be 8 characters or longer"
+        msg += "one upper-case letter,\n"
+        msg += "one digit, 0-9\n"
+        msg += "one special character from the list @$!%*#?&\n"
+        msg += "the length must be at least 8 characters and a maximum of 20\n"
         msg += f"\n{password}"
         msg_type = "warning"
     else:
@@ -164,8 +166,7 @@ def add(event):
             msg = "Error: The site_id already exists in passwords"
             msg_type = "warning"
         elif site_id and username and password:
-            password_dict = add_password(password_dict, site_id, 
-                    username, password)
+            password_dict = add_password(password_dict, site_id, username, password)
             write_file(password_dict)
             msg = "Success, Password added!!"
             msg_type = "normal"
@@ -259,7 +260,9 @@ def update_password(site, password, password_dict):
     except ValueError as json_error:
         sys.exit(f"Error decoding JSON: {json_error}")
     except InvalidToken:
-        sys.exit("Missing encryption token in .projectec\n password cannot be decrypted")
+        sys.exit(
+            "Missing encryption token in .projectec\n password cannot be decrypted"
+        )
 
     return password_dict
 
@@ -293,9 +296,10 @@ def get(event):
                     try:
                         msg += f"\n{key}: {decrypt_pwd(cipher, value)}"
                     except InvalidToken:
-                        sys.exit(f"Invalid token: Decryption failed\n \
-                   for Site ID: {site}")
-
+                        sys.exit(
+                            f"Invalid token: Decryption failed\n \
+                                        for Site ID: {site}"
+                        )
 
                 else:
                     msg += f"\n{key}: {info[key]}"
