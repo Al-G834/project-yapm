@@ -31,9 +31,8 @@ def create_rc_dir():
     """
     if not os.path.isdir(".projectrc"):
         os.mkdir("./.projectrc", mode=0o740)
-
-    Path("./.projectrc/DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY").touch()
-    os.chmod("./.projectrc/DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY", mode=0o444)
+        Path("./.projectrc/DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY").touch()
+        os.chmod("./.projectrc/DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY", mode=0o444)
 
 
 def generate_key():
@@ -220,10 +219,10 @@ def update(event):
     if not validate_pwd(password):
         msg = "Password must have at least:\none upper-case letter,\n"
         msg += "one lower-case letter,\n"
-        msg += "1 digit,\n"
-        msg += "a special character '@$!%*?&',\n"
-        msg += "no embeded spaces,\n"
-        msg += "and the length must be 8 characters or longer"
+        msg += "one upper-case letter,\n"
+        msg += "one digit, 0-9\n"
+        msg += "one special character from the list @$!%*#?&\n"
+        msg += "the length must be at least 8 characters and a maximum of 20\n"
         msg += f"\n{password}"
         msg_type = "warning"
     else:
