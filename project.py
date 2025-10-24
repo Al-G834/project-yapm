@@ -151,9 +151,9 @@ def add(event):
     username = entry_name.get().strip()
     password = entry_password.get().strip()
     if not validate_pwd(password):
-        msg = "Password must have at least:\none upper-case letter,\n"
-        msg += "one lower-case letter,\n"
+        msg = "Password must have at least:\n"
         msg += "one upper-case letter,\n"
+        msg += "one lower-case letter,\n"
         msg += "one digit, 0-9\n"
         msg += "one special character from the list @$!%*#?&\n"
         msg += "the length must be at least 8 characters and a maximum of 20\n"
@@ -217,9 +217,9 @@ def update(event):
     password = entry_password.get().strip()
     clear_entry_widgets()
     if not validate_pwd(password):
-        msg = "Password must have at least:\none upper-case letter,\n"
-        msg += "one lower-case letter,\n"
+        msg = "Password must have at least:\n"
         msg += "one upper-case letter,\n"
+        msg += "one lower-case letter,\n"
         msg += "one digit, 0-9\n"
         msg += "one special character from the list @$!%*#?&\n"
         msg += "the length must be at least 8 characters and a maximum of 20\n"
