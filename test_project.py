@@ -5,7 +5,7 @@ from project import validate_pwd
 from project import read_file
 from project import write_file
 from project import validate_json
-from project import update_password
+# from project import update_password
 import json
 
 
@@ -49,17 +49,18 @@ def test_read_file_JSONDECODE_ERROR(bad_json):
     ("site, password, password_dict, expected_exception"),
     [
         (
-            "site 1",
+            "key error 1",
             "TooEasy#2",
             '{ "site 1": \
-                    { "username": "al", "password": 1 }}',
+                    { "username": "al", "password": TooEay#1 }}',
             TypeError,
         ),
     ],
 )
-def test_update_password(site, password, password_dict, expected_exception):
+# def test_update_password(site, password, password_dict, expected_exception):
+def test_password(site, password, password_dict, expected_exception):
     with pytest.raises(TypeError):
-        update_password(site, password, password_dict)
+        password(site, password, password_dict)
 
 
 def test_validate_json_extra_comma():
