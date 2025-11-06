@@ -45,7 +45,7 @@ The files and hidden directory are used by project.py:\
            encrypt/decrypt the passwords.  Used to encrypt/decrypt\
            passwords in the dictionary.\
         - `requirements.txt` - The list of python modules used.\
-        - `test_project.py` - pytest unit test code.\
+        - `test_project.py` - pytest unit test code.
 
 
 **Initial Startup**\
@@ -64,7 +64,7 @@ The application provides five functions to manage the dictionary:\
         2. Get\
         3. List\
         4. Update\
-        5. Delete\
+        5. Delete
 
 Each function begins by reading the password.json file into memory. At
 the end of each function, the nested dictionary is serialized into a
