@@ -1,4 +1,4 @@
-# Yet Another Password Manager
+## Yet Another Password Manager
 
 ## Video Demo: <url>
 
@@ -33,22 +33,22 @@ The directory structure is described by this figure:
 └── [-rw-rw-r--]  test_project.py
 ```
 
-**Files**
-The files and hidden directory are used by project.py:
-        1. ```password.json``` - This file contains the password dictionary in
-           a json structure.
-        2. ```project.py``` - The python code for the final project.
-        3. ```.projectrc``` - This subdirectory contains the encryption key
-        4. ```DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY``` - This is a file of
-           zero size.  It is meant to caution the user.
-        5. ```encryption_key.key``` - The cryptographic key used to
-           encrypt/decrypt the passwords.  Used to encrypt/decrypt
-           passwords in the dictionary.
-        6. ```requirements.txt``` - The list of python modules used.
-        7. ```test_project.py``` - pytest unit test code.
+==== Files
+The files and hidden directory are used by project.py:\
+        - `password.json` - This file contains the password dictionary in\
+           a json structure.\
+        - `project.py` - The python code for the final project.\
+        - `.projectrc` - This subdirectory contains the encryption key\
+        - `DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY` - This is a file of\
+           zero size.  It is meant to caution the user.\
+        - `encryption_key.key` - The cryptographic key used to\
+           encrypt/decrypt the passwords.  Used to encrypt/decrypt\
+           passwords in the dictionary.\
+        - `requirements.txt` - The list of python modules used.\
+        - `test_project.py` - pytest unit test code.\
 
 
-**Initial Startup**
+**Initial Startup**\
 When the ```project.py``` is started, it checks to see if the hidden
 directory, .projectrc, exists.  If this is the first time, the hidden
 directory is created and the encryption key is written in that
@@ -59,12 +59,12 @@ passwords will be useless.
 Messages will be displayed in the text widget, error messages are
 displayed in red.
 
-The application provides five functions to manage the dictionary:
-        1. Add
-        2. Get
-        3. List
-        4. Update
-        5. Delete
+The application provides five functions to manage the dictionary:\
+        1. Add\
+        2. Get\
+        3. List\
+        4. Update\
+        5. Delete\
 
 Each function begins by reading the password.json file into memory. At
 the end of each function, the nested dictionary is serialized into a
@@ -72,7 +72,7 @@ json formatted file and written to disk.
 The dictionary allows only one username-password tuple per
 Identifier/Site ID.
 
-**1. Add Processing**
+**1. Add Processing**\
 Populate the SITE ID, USERNAME, and PASSWORD widgets.
 Pressing the 'Add' button causes the app to check if the Site ID already
 exists, if it does and error message is displayed in the Text frame
@@ -89,22 +89,22 @@ checked for the following:
 After the password has been encrypted, the dictionary is updated and
 written to a json file.
 
-**2. Get processing**
+**2. Get processing**\
 Populate the SITE ID widget.
 Press the Get button, the application will locate and display the SITE
 ID, USERNAME, and PASSWORD in the Text frame. The password will be
 displayed in plain-text.
 
-**3. List processing**
+**3. List processing**\
 The widgets may be left blank.
 Press the List button and all SITE ID's will be displayed in the text
 widget.
 
-**4. Update processing**
+**4. Update processing**\
 Populate the SITE ID and PASSWORD widgets.
 Only the SITE ID and PASSWORD are required to update the password. The
 value of the password is replaced with the newly encrypted password.
 
-**5. Delete processing**
+**5. Delete processing**\
 Populate the SITE ID.
 The SITE ID, USERNAME, and PASSWORD will be deleted from the dictionary.
