@@ -7,13 +7,14 @@
 <img width="520" height="457" alt="yapm" src="https://github.com/user-attachments/assets/22f579f9-94ab-4033-a500-e2cd96f26bf8" />
 
 
-My final project is a password manager that stores the username and password in a nested dictionary. This would be an example:
+My final project is a password manager that stores the username and
+password in a nested dictionary. This would be an example:
 
 ```json
 { "Sample Site ID": { "username": "Ur Name", "password": "gAAAAABocrKA8CaFGJxIWTnFBeBz2ybHzYGP6kJhCl24OarLtw8SdJfvWCNiOE4HN1QFVpgbOuLHPVCTqEvfGdOcXdGRWvWfqZvZImT4onSPtmYGrGem9ww=" },
 ```
 
-I wanted to use Tkinter to get familiar with GUI interfaces.  I also
+I wanted to use Tkinter to become familiar with GUI interfaces.  I also
 chose to use the PyPi Python package cryptography.
 
 ```bash
@@ -25,21 +26,38 @@ The directory structure is described by this figure:
 [drwxrwxr-x]  .
 ├── [-rw-rw-r--]  password.json
 ├── [-rw-rw-r--]  project.py
-└── [drwxr-----]  .projectrc
-    └── [-rwx------]  encryption_key.key
+├── [drwxr-----]  .projectrc
+│   ├── [-r--r--r--]  DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY
+│   └── [-rwx------]  encryption_key.key
+├── [-rw-rw-r--]  requirements.txt
+└── [-rw-rw-r--]  test_project.py
 ```
+
+**Files**
+The files and hidden directory are used by project.py:
+        1. ```password.json``` - This file contains the password dictionary in
+           a json structure.
+        2. ```project.py``` - The python code for the final project.
+        3. ```.projectrc``` - This subdirectory contains the encryption key
+        4. ```DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY``` - This is a file of
+           zero size.  It is meant to caution the user.
+        5. ```encryption_key.key``` - The cryptographic key used to
+           encrypt/decrypt the passwords.  Used to encrypt/decrypt
+           passwords in the dictionary.
+        6. ```requirements.txt``` - The list of python modules used.
+        7. ```test_project.py``` - pytest unit test code.
 
 
 **Initial Startup**
-When the ```project.py``` is started, it check to see if the hidden
+When the ```project.py``` is started, it checks to see if the hidden
 directory, .projectrc, exists.  If this is the first time, the hidden
 directory is created and the encryption key is written in that
-.projectrc directory.  A sample Site ID, userid, and password are
-written to the password file.
+hidden directory.
 The encryption key is used to encrypt/decrypt the stored password.  If
 the key is erased, a new one will be generated.  But all of the stored
 passwords will be useless.
-Messages will be displayed in the text widget, error messages are displayed in red.
+Messages will be displayed in the text widget, error messages are
+displayed in red.
 
 The application provides five functions to manage the dictionary:
         1. Add
@@ -79,13 +97,13 @@ displayed in plain-text.
 
 **3. List processing**
 The widgets may be left blank.
-Press the List button and all SITE ID's will be displayed in the Text
+Press the List button and all SITE ID's will be displayed in the text
 widget.
 
 **4. Update processing**
 Populate the SITE ID and PASSWORD widgets.
 Only the SITE ID and PASSWORD are required to update the password. The
-value of the password is replaced with the encrypted password.
+value of the password is replaced with the newly encrypted password.
 
 **5. Delete processing**
 Populate the SITE ID.
