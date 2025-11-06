@@ -28,19 +28,6 @@ The directory structure is described by this figure:
 └── [drwxr-----]  .projectrc
     └── [-rwx------]  encryption_key.key
 ```
-**Files**
-The files and hidden directory are used by project.py:
-        1. `password.json` - This file contains the password dictionary in
-           a json structure.
-        2. `project.py` - The python code for the final project.
-        3. `.projectrc` - This subdirectory contains the encryption key
-        4. `DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY` - This is a file of
-        5. `encryption_key.key` - The cryptographic key used to
-           encrypt/decrypt the passwords.  It has size zero bytes,
-           the name is meant to caution the user.
-           Used to encrypt/decrypt passwords in the dictionary.
-        6. `requirements.txt` - The list of python modules used.
-        7. `test_project.py` - pytest unit test code.
 
 
 **Initial Startup**
