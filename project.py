@@ -11,7 +11,6 @@
 """
 import os
 import sys
-import hashlib
 import json
 import re
 from pathlib import Path
@@ -31,9 +30,8 @@ def create_rc_dir():
     """
     if not os.path.isdir(".projectrc"):
         os.mkdir("./.projectrc", mode=0o740)
-
-    Path("./.projectrc/DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY").touch()
-    os.chmod("./.projectrc/DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY", mode=0o444)
+        Path("./.projectrc/DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY").touch()
+        os.chmod("./.projectrc/DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY", mode=0o444)
 
 
 def generate_key():
@@ -95,7 +93,6 @@ def read_file(json_file="password.json"):
     except FileNotFoundError as e_fnf:
         raise FileNotFoundError("File password.json not found") from e_fnf
     except json.JSONDecodeError as decode_err:
-        # print(f"Invalid JSON syntax")
         raise json.decoder.JSONDecodeError(
             "Invalid JSON syntax", "password file", 0
         ) from decode_err
@@ -151,19 +148,37 @@ def add(event):
     site_id = entry_site.get().strip()
     username = entry_name.get().strip()
     password = entry_password.get().strip()
+    msg = ""
+    msg_nbr = 0
+    if validate_data_element(site_id):
+        msg_nbr += 1
+        msg = f"{msg_nbr}. Site ID contains one of these illegal characters:\n"
+        msg += "\"  '\n\n"
+        msg += f"Site ID entered: {site_id}\n\n"
+        msg_type = "warning"
+    if validate_data_element(username):
+        msg_nbr += 1
+        msg += f"{msg_nbr}. Username contains one of these illegal characters:\n"
+        msg += "\"  '\n\n"
+        msg += f"Username entered: {username}\n\n"
+        msg_type = "warning"
     if not validate_pwd(password):
-        msg = "Password must have at least:\none upper-case letter,\n"
+        msg_nbr += 1
+        msg += f"{msg_nbr}. Password must have at least:\n"
+        msg += "one upper-case letter,\n"
         msg += "one lower-case letter,\n"
         msg += "one digit, 0-9\n"
         msg += "one special character from the list @$!%*#?&\n"
         msg += "the length must be at least 8 characters and a maximum of 20\n"
-        msg += "password cannot contain embedded spaces"
-        msg += f"\n{password}"
+        msg += "passwords must not contain embeded spaces"
+        msg += f"\n{password}\n"
         msg_type = "warning"
-    else:
+
+    if 'msg_type' not in locals():
+    # else:
         key_list = list(password_dict.keys())
         if site_id in key_list:
-            msg = "Error: The site_id already exists in passwords"
+            msg = f"Error: The site_id, {site_id}, already exists in passwords"
             msg_type = "warning"
         elif site_id and username and password:
             password_dict = add_password(password_dict, site_id, username, password)
@@ -202,7 +217,7 @@ def add_password(password_dict, site_id, username, password):
     return password_dict
 
 
-def update(event):
+def update_password(event):
     """
     update the password for the Site ID and username
     Input:
@@ -217,54 +232,46 @@ def update(event):
     site = entry_site.get().strip()
     password = entry_password.get().strip()
     clear_entry_widgets()
-    if not validate_pwd(password):
-        msg = "Password must have at least:\none upper-case letter,\n"
+    key_set = set(password_dict.keys())
+    if site not in key_set:
+        msg = f"Site ID {site} not in dictionary!!"
+        msg_type = "warning"
+    elif not (site and password):
+        msg = "SiteID and password are required for update"
+        msg_type = "warning"
+    elif not validate_pwd(password):
+        msg = "Password must have at least:\n"
+        msg += "one upper-case letter,\n"
         msg += "one lower-case letter,\n"
-        msg += "1 digit,\n"
-        msg += "a special character '@$!%*?&',\n"
-        msg += "no embeded spaces,\n"
-        msg += "and the length must be 8 characters or longer"
+        msg += "one digit, 0-9\n"
+        msg += "one special character from the list @$!%*#?&\n"
+        msg += "the length must be at least 8 characters and a maximum of 20\n"
+        msg += "passwords must not contain embeded spaces"
         msg += f"\n{password}"
         msg_type = "warning"
     else:
-        password_dict = update_password(site, password, password_dict)
+        try:
+            password_dict[f"{site}"].update(
+                {"password": f"{encrypt_pwd(cipher, password)}"}
+            )
+        except KeyError as key_err:
+            msg = f"Site ID '{site}' not found {key_err}!!"
+            msg_type = "warning"
+            show_msg(msg, msg_type)
+            return
+        except ValueError as json_error:
+            sys.exit(f"Error decoding JSON: {json_error}")
+        except InvalidToken:
+            sys.exit(
+                "Missing encryption token in .projectec\n password cannot be decrypted"
+            )
         msg = f"Site ID: {site} updated!!"
         msg_type = "normal"
         write_file(password_dict)
 
     show_msg(msg, msg_type)
 
-
-def update_password(site, password, password_dict):
-    """
-    The password for the given site is updated.
-    Input:
-        site
-        password
-        password dictionary
-
-    Output:
-        password dictionary
-
-    Raises:
-        KeyError
-        ValueError
-        InvalidToken
-    """
-    try:
-        password_dict[f"{site}"].update(
-            {"password": f"{encrypt_pwd(cipher, password)}"}
-        )
-    except KeyError as key_err:
-        sys.exit(f"{key_err}")
-    except ValueError as json_error:
-        sys.exit(f"Error decoding JSON: {json_error}")
-    except InvalidToken:
-        sys.exit(
-            "Missing encryption token in .projectec\n password cannot be decrypted"
-        )
-
-    return password_dict
+    return  # password_dict
 
 
 def get(event):
@@ -350,7 +357,7 @@ def delete(event):
     if site_id:
         deleted_site = password_dict.pop(site_id, None)
         if deleted_site is None:
-            msg = "SiteID not found"
+            msg = f"SiteID {site_id} not found"
             msg_type = "warning"
         else:
             msg = f"SiteID: {site_id} deleted"
@@ -393,12 +400,23 @@ def validate_pwd(password):
     remat = re.fullmatch(pattern, password)
     return bool(remat)
 
+def validate_data_element(site):
+    """SiteID cannot contain ' or \""""
+
+    # illegal_chars = (r"[\"\'\$\^\\|]")
+    illegal_chars = (r"[\"\']")
+    re_match = re.search(illegal_chars, site)
+    return bool(re_match)
 
 def clear_entry_widgets():
     """Clears the entry wigets for Site ID, username, and password."""
     entry_site.delete(0, tk.END)
     entry_name.delete(0, tk.END)
     entry_password.delete(0, tk.END)
+    # 2025-11-10 
+    T["state"] = "normal"
+    T.delete("1.0", tk.END)
+    T["state"] = "disabled"
 
 
 def clear_fields():
@@ -532,8 +550,8 @@ if __name__ == "__main__":
     #    # Update password button
     button_update = tk.Button(app, text="Update")
     button_update.grid(row=3, column=3, padx=15, pady=8, sticky="we")
-    button_update.bind("<Return>", update)
-    button_update.bind("<Button-1>", update)
+    button_update.bind("<Return>", update_password)
+    button_update.bind("<Button-1>", update_password)
 
     #    # Delete button
     button_delete = tk.Button(app, text="Delete", bg="red", font="bold")
