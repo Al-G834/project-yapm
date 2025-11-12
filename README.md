@@ -42,8 +42,7 @@ The files and hidden directory are used by project.py:\
         - `DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY` - This is a file of\
            zero size.  It is meant to caution the user.\
         - `encryption_key.key` - The cryptographic key used to\
-           encrypt/decrypt the passwords.  Used to encrypt/decrypt\
-           passwords in the dictionary.\
+           encrypt/decrypt the passwords.\
         - `requirements.txt` - The list of python modules used.\
         - `test_project.py` - pytest unit test code.
 
@@ -74,8 +73,10 @@ Identifier/Site ID.
 
 **1. Add Processing**\
 Populate the SITE ID, USERNAME, and PASSWORD widgets.
-Pressing the 'Add' button causes the app to check if the Site ID already
-exists, if it does and error message is displayed in the Text frame
+Pressing the 'Add' button triggers the app to validate the SITE ID and
+USERNAME values, the characters " and ' are not allowed.
+The app then checks if the Site ID already exists, 
+if it does an error message is displayed in the Text frame
 below. If the Site ID does not exist in the dictionary, the password is
 checked for the following:
 - the password must be longer than 7 characters.
