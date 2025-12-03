@@ -68,13 +68,16 @@ The application provides five functions to manage the dictionary:\
 Each function begins by reading the password.json file into memory. At
 the end of each function, the nested dictionary is serialized into a
 json formatted file and written to disk.
+Also, each function displays messages in the test widget at the bottom
+of the window.  Messages ib black are information regarding the success
+of the function.  Error messages are displayed in red.
 The dictionary allows only one username-password tuple per
 Identifier/Site ID.
 
 **1. Add Processing**\
 Populate the SITE ID, USERNAME, and PASSWORD widgets.
-Pressing the 'Add' button triggers the app to validate the SITE ID and
-USERNAME values, the characters " and ' are not allowed.
+Pressing the 'Add' button triggers the app to validate the SITE ID,
+USERNAME, and PASSWORD values, the characters " and ' are not allowed.
 The app then checks if the Site ID already exists, 
 if it does an error message is displayed in the Text frame
 below. If the Site ID does not exist in the dictionary, the password is
@@ -84,7 +87,7 @@ checked for the following:
 - the password must contain at least one upper-case character.
 - the password must contain at least one lower-case character.
 - the password must contain at least one digit.
-- the password must contain at least one special character from the list '@$!%*?&'.
+- the password must contain at least one special character from the list @$!%*?&.
 - the password cannot contain embedded spaces.
 
 After the password has been encrypted, the dictionary is updated and
@@ -98,8 +101,8 @@ displayed in plain-text.
 
 **3. List processing**\
 The widgets may be left blank.
-Press the List button and all SITE ID's will be displayed in the text
-widget.
+Press the List button and all SITE ID's, in the dictionary, will 
+be displayed in the text widget.
 
 **4. Update processing**\
 Populate the SITE ID and PASSWORD widgets.
@@ -109,3 +112,4 @@ value of the password is replaced with the newly encrypted password.
 **5. Delete processing**\
 Populate the SITE ID.
 The SITE ID, USERNAME, and PASSWORD will be deleted from the dictionary.
+
