@@ -33,7 +33,7 @@ The directory structure is described by this figure:
 └── [-rw-rw-r--]  test_project.py
 ```
 
-==== Files
+#### Files
 The files and hidden directory are used by project.py:\
         - `password.json` - This file contains the password dictionary in\
            a json structure.\
