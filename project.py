@@ -21,7 +21,6 @@ from tkinter import Menu
 
 from cryptography.fernet import Fernet, InvalidToken
 
-
 def create_rc_dir():
     """
     Create a ~/.projectrc directory in the directory that the script
@@ -353,7 +352,7 @@ def delete(event):
     password_dict = read_file()
 
     site_id = entry_site.get().strip()
-    clear_entry_widgets()
+    # clear_entry_widgets()
     if site_id:
         deleted_site = password_dict.pop(site_id, None)
         if deleted_site is None:
@@ -413,10 +412,10 @@ def clear_entry_widgets():
     entry_site.delete(0, tk.END)
     entry_name.delete(0, tk.END)
     entry_password.delete(0, tk.END)
-    # 2025-11-10 
-    T["state"] = "normal"
-    T.delete("1.0", tk.END)
-    T["state"] = "disabled"
+    # # 2025-11-10 
+    # T["state"] = "normal"
+    # T.delete("1.0", tk.END)
+    # T["state"] = "disabled"
 
 
 def clear_fields():
@@ -471,6 +470,7 @@ def delete_help():
     msg = "This will delete the Site ID, Username, and Password from the "
     msg += "Password Manager.\nPopulate the Site ID widget."
     show_msg(msg, "normal")
+
 
 
 if __name__ == "__main__":
